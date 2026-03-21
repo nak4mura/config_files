@@ -41,7 +41,18 @@ node .claude/skills/process-subissues/scripts/get-ordered-subissues.js <owner> <
 
 循環依存がある場合は `⚠️ 循環依存あり` と警告を表示します。
 
-## ステップ4: 各Issueを順番に処理
+## ステップ4: featureブランチの作成
+
+処理を開始する前に、作業用ブランチを作成します。
+
+1. **親issueのタイトルをもとにブランチ名を決定** — `feature/<スラッグ>` 形式（スラッグは小文字英数字とハイフンのみ）
+2. **ブランチを作成してチェックアウト**:
+   ```bash
+   git checkout -b feature/<スラッグ>
+   ```
+   既にfeatureブランチにいる場合はそのまま継続します。
+
+## ステップ5: 各Issueを順番に処理
 
 既にCLOSEDのissueはスキップします。OPENのissueを順番に処理します:
 
@@ -59,12 +70,45 @@ node .claude/skills/process-subissues/scripts/get-ordered-subissues.js <owner> <
 
 3. **ユーザーの承認を得てから実装開始**
 
-4. **実装完了後、issueをcloseするか確認**:
+4. **実装完了後、変更をコミット**:
+   ```bash
+   git add <変更ファイル>
+   git commit -m "fix: #<number> <issueタイトル>
+
+   Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+   ```
+
+5. **issueをclose**:
    ```bash
    gh issue close <number> --comment "実装完了"
    ```
 
-5. **次のissueへ** — 直前のissueの完了によりunblockされたissueを提示
+6. **次のissueへ** — 直前のissueの完了によりunblockされたissueを提示
+
+## ステップ6: 全subissue完了後の処理
+
+全てのsub-issueがCLOSEDになったら:
+
+1. **親issueをclose**:
+   ```bash
+   gh issue close <parent_number> --comment "全sub-issueの実装が完了しました"
+   ```
+
+2. **developブランチへのプルリクエストを作成**:
+   ```bash
+   gh pr create --base develop --title "<親issueタイトル>" --body "$(cat <<'EOF'
+   ## Summary
+   - Closes #<parent_number>
+   - <処理したsub-issueの一覧（番号とタイトル）>
+
+   ## Test plan
+   - [ ] 各sub-issueの実装内容を確認
+   - [ ] 動作確認
+
+   🤖 Generated with [Claude Code](https://claude.com/claude-code)
+   EOF
+   )"
+   ```
 
 ## 注意事項
 
@@ -75,3 +119,5 @@ node .claude/skills/process-subissues/scripts/get-ordered-subissues.js <owner> <
   ```bash
   git branch --show-current
   ```
+- コミットは各sub-issue完了ごとに行い、まとめてコミットしない
+- PRのbaseブランチは必ず `develop` とする
