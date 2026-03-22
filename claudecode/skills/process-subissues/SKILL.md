@@ -1,7 +1,7 @@
 ---
 name: process-subissues
 description: GitHub issue番号から紐づくsub-issuesを取得し、ブロック関係を考慮して未ブロック順に処理します。引数にissue番号を指定して使用。
-disable-model-invocation: true
+disable-model-invocation: false
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Agent
 ---
 
