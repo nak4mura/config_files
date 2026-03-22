@@ -1,3 +1,5 @@
+# /create-subissues
+
 GitHub issueをタスク分解してsub-issuesを作成します。
 
 ## 手順

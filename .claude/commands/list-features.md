@@ -1,7 +1,4 @@
----
-name: list-features
-description: ソースコードとAPIエンドポイントから機能単位で一覧を作成。/list-features コマンドから使用。
----
+# /list-features
 
 ソースコードとAPIエンドポイントを解析して、機能単位の一覧をMarkdown形式で生成する手順：
 
